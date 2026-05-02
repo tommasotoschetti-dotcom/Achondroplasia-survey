@@ -1,1 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ACH / HCH UK Centre Survey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  :root {
+    --bg: #F7F6F3;
+    --surface: #FFFFFF;
+    --surface2: #F2F1ED;
+    --border: #E2E0D8;
+    --border2: #CFCDC3;
+    --text: #1A1916;
+    --text2: #6B6860;
+    --text3: #9E9C95;
+    --ach: #1B4F8A;
+    --ach-bg: #EBF1F9;
+    --ach-border: #B8CEE8;
+    --hch: #2A6B3F;
+    --hch-bg: #EAF4EE;
+    --hch-border: #A8D4B5;
+    --accent: #C4601A;
+    --danger: #C0392B;
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+  }
+  .header-title {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--text2);
+    text-transform: uppercase;
+  }
+  .progress-outer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .progress-track {
+    width: 140px;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--ach);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  .progress-label {
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text3);
+    min-width: 32px;
+  }
+
+  /* ── Layout ── */
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3rem 2rem 6rem;
+  }
+
+  /* ── Intro block ── */
+  .intro {
+    margin-bottom: 3rem;
+  }
+  .intro h1 {
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+  }
+  .intro h1 strong { font-weight: 500; }
+  .intro p {
+    font-size: 14px;
+    color: var(--text2);
+    max-width: 520px;
+    line-height: 1.7;
+  }
+  .intro-meta {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text3);
+    font-family: 'DM Mono', monospace;
+  }
+  .meta-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--text3);
+    flex-shrink: 0;
+  }
+
+  /* ── Section card ── */
+  .section-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+  .section-head {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+  }
+  .section-num {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    flex-shrink: 0;
+  }
+  .section-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .section-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  /* ── Field ── */
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+  }
+  .field label .req { color: var(--danger); margin-left: 2px; }
+  .field .hint {
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  select,
+  textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 9px 12px;
+    width: 100%;
+    transition: border-color 0.15s, background 0.15s;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  input[type="number"] { width: 110px; }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--ach);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(27,79,138,0.08);
+  }
+  textarea { resize: vertical; min-height: 72px; }
+  select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B6860' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+
+  /* ── Condition badges ── */
+  .cond-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 0.75rem;
+  }
+  .cond-ach { background: var(--ach-bg); color: var(--ach); border: 1px solid var(--ach-border); }
+  .cond-hch { background: var(--hch-bg); color: var(--hch); border: 1px solid var(--hch-border); }
+
+  /* ── Divider ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0.25rem 0;
+  }
+
+  /* ── Inline row ── */
+  .inline-row { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: flex-end; }
+  .inline-row .field { flex: 0 0 auto; }
+  .inline-row .field input[type="number"] { width: 90px; }
+  .inline-row .field input[type="text"] { width: 200px; }
+
+  /* ── Age grid ── */
+  .age-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .age-cell {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+  }
+  .age-band {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text2);
+    margin-bottom: 8px;
+    font-family: 'DM Mono', monospace;
+  }
+  .age-mf {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .age-mf label {
+    font-size: 11px;
+    color: var(--text3);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .age-mf input {
+    width: 52px !important;
+    font-size: 13px;
+    padding: 5px 7px;
+  }
+
+  /* ── WTE grid ── */
+  .wte-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .wte-grid .field input { width: 100%; }
+  .wte-grid .field label { font-size: 12px; }
+
+  /* ── Surgical sub-block ── */
+  .surg-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .surg-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 0.1rem;
+  }
+  .surg-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .surg-pair .field input { width: 100%; }
+  .surg-pair .field label { font-size: 12px; }
+
+  /* ── Checkbox group ── */
+  .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text2);
+    cursor: pointer;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    transition: all 0.12s;
+    font-weight: 400;
+    user-select: none;
+  }
+  .checkbox-group input[type="checkbox"] {
+    width: auto;
+    width: 14px;
+    height: 14px;
+    accent-color: var(--ach);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .checkbox-group label:has(input:checked) {
+    background: var(--ach-bg);
+    border-color: var(--ach-border);
+    color: var(--ach);
+  }
+
+  /* ── Radio group ── */
+  .radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text2);
+    cursor: pointer;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 14px;
+    transition: all 0.12s;
+    font-weight: 400;
+    user-select: none;
+  }
+  .radio-group input[type="radio"] { display: none; }
+  .radio-group label:has(input:checked) {
+    background: var(--ach-bg);
+    border-color: var(--ach-border);
+    color: var(--ach);
+    font-weight: 500;
+  }
+
+  /* ── Note box ── */
+  .note {
+    background: var(--ach-bg);
+    border-left: 2px solid var(--ach);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 9px 13px;
+    font-size: 13px;
+    color: var(--ach);
+    line-height: 1.5;
+  }
+
+  /* ── Submit ── */
+  .submit-wrap {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .submit-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    background: var(--ach);
+    border: none;
+    border-radius: var(--radius);
+    padding: 12px 28px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: 0.01em;
+  }
+  .submit-btn:hover { background: #153E6E; }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-note {
+    font-size: 12px;
+    color: var(--text3);
+  }
+
+  /* ── Success screen ── */
+  #success-screen {
+    display: none;
+    text-align: center;
+    padding: 5rem 2rem;
+  }
+  #success-screen .check {
+    width: 56px; height: 56px;
+    background: var(--hch-bg);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 22px;
+  }
+  #success-screen h2 {
+    font-size: 22px;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+  }
+  #success-screen p {
+    font-size: 14px;
+    color: var(--text2);
+    max-width: 360px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 560px) {
+    .page { padding: 2rem 1rem 5rem; }
+    .age-grid { grid-template-columns: repeat(2, 1fr); }
+    .wte-grid { grid-template-columns: 1fr 1fr; }
+    .surg-pair { grid-template-columns: 1fr; }
+    .intro h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <span class="header-title">ACH / HCH UK Centre Survey</span>
+    <div class="progress-outer">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="progress-label" id="progressLabel">0%</span>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="intro">
+    <h1>UK Centre Survey<br><strong>Achondroplasia &amp; Hypochondroplasia</strong></h1>
+    <p>Please complete for your centre. All fields are anonymised at analysis stage. Contact: <a href="mailto:moira.cheung@gosh.nhs.uk" style="color:var(--ach)">moira.cheung@gosh.nhs.uk</a></p>
+    <div class="intro-meta">
+      <span class="meta-item"><span class="meta-dot"></span>6 sections</span>
+      <span class="meta-item"><span class="meta-dot"></span>5–8 minutes</span>
+      <span class="meta-item"><span class="meta-dot"></span>One response per centre</span>
+    </div>
+  </div>
+
+  <!-- ─────────────── FORM ─────────────── -->
+  <!--
+    SETUP: Replace xnjwnrnk below with your Formspree endpoint.
+    1. Go to formspree.io → New Form → copy the form ID
+    2. Replace xnjwnrnk in the action attribute
+    Example: action="https://formspree.io/f/abcd1234"
+  -->
+  <form id="survey-form" action="https://formspree.io/f/xnjwnrnk" method="POST">
+
+    <!-- S1: Centre -->
+    <div class="section-card">
+      <div class="section-head">
+        <span class="section-num">01</span>
+        <span class="section-name">Centre information</span>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label>Centre / hospital name <span class="req">*</span></label>
+          <input type="text" name="centre_name" placeholder="e.g. Great Ormond Street Hospital" required />
+        </div>
+        <div class="field">
+          <label>Respondent name and role</label>
+          <input type="text" name="respondent" placeholder="e.g. Dr Smith, Consultant Paediatric Endocrinologist" />
+        </div>
+        <div class="field">
+          <label>Contact email</label>
+          <input type="email" name="email" placeholder="name@trust.nhs.uk" />
+        </div>
+      </div>
+    </div>
+
+    <!-- S2: Patient numbers -->
+    <div class="section-card">
+      <div class="section-head">
+        <span class="section-num">02</span>
+        <span class="section-name">Patient numbers</span>
+      </div>
+      <div class="section-body">
+
+        <div>
+          <div class="cond-label cond-ach">ACH — Achondroplasia</div>
+          <div class="field">
+            <label>Total active patients <span class="req">*</span></label>
+            <input type="number" name="ach_total" min="0" placeholder="0" required />
+          </div>
+        </div>
+
+        <hr class="divider" />
+
+        <div>
+          <div class="cond-label cond-hch">HCH — Hypochondroplasia</div>
+          <div class="field">
+            <label>Total active patients <span class="req">*</span></label>
+            <input type="number" name="hch_total" min="0" placeholder="0" required />
+          </div>
+        </div>
+
+        <hr class="divider" />
+
+        <div class="field">
+          <label>Age &amp; gender breakdown — ACH + HCH combined</label>
+          <p class="hint">Enter number of male / female patients per age band</p>
+          <div class="age-grid" style="margin-top:8px">
+            <div class="age-cell">
+              <div class="age-band">&lt; 2 yrs</div>
+              <div class="age-mf">
+                <label>M</label><input type="number" name="age_u2_m" min="0" placeholder="0" />
+                <label>F</label><input type="number" name="age_u2_f" min="0" placeholder="0" />
+              </div>
+            </div>
+            <div class="age-cell">
+              <div class="age-band">2–5 yrs</div>
+              <div class="age-mf">
+                <label>M</label><input type="number" name="age_2_5_m" min="0" placeholder="0" />
+                <label>F</label><input type="number" name="age_2_5_f" min="0" placeholder="0" />
+              </div>
+            </div>
+            <div class="age-cell">
+              <div class="age-band">5–10 yrs</div>
+              <div class="age-mf">
+                <label>M</label><input type="number" name="age_5_10_m" min="0" placeholder="0" />
+                <label>F</label><input type="number" name="age_5_10_f" min="0" placeholder="0" />
+              </div>
+            </div>
+            <div class="age-cell">
+              <div class="age-band">10–16 yrs</div>
+              <div class="age-mf">
+                <label>M</label><input type="number" name="age_10_16_m" min="0" placeholder="0" />
+                <label>F</label><input type="number" name="age_10_16_f" min="0" placeholder="0" />
+              </div>
+            </div>
+            <div class="age-cell">
+              <div class="age-band">16–18 yrs</div>
+              <div class="age-mf">
+                <label>M</label><input type="number" name="age_16_18_m" min="0" placeholder="0" />
+                <label>F</label><input type="number" name="age_16_18_f" min="0" placeholder="0" />
+              </div>
+            </div>
+            <div class="age-cell">
+              <div class="age-band">&gt; 18 yrs</div>
+              <div class="age-mf">
+                <label>M</label><input type="number" name="age_o18_m" min="0" placeholder="0" />
+                <label>F</label><input type="number" name="age_o18_f" min="0" placeholder="0" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- S3: MDT resources -->
+    <div class="section-card">
+      <div class="section-head">
+        <span class="section-num">03</span>
+        <span class="section-name">MDT resources</span>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label>Whole time equivalent (WTE) by role</label>
+          <p class="hint">Leave blank if role not present at your centre</p>
+          <div class="wte-grid" style="margin-top:8px">
+            <div class="field">
+              <label>Occupational therapy (OT)</label>
+              <input type="number" name="wte_ot" step="0.1" min="0" placeholder="e.g. 0.5" />
+            </div>
+            <div class="field">
+              <label>Physiotherapy (PT)</label>
+              <input type="number" name="wte_pt" step="0.1" min="0" placeholder="e.g. 0.5" />
+            </div>
+            <div class="field">
+              <label>Psychology</label>
+              <input type="number" name="wte_psy" step="0.1" min="0" placeholder="e.g. 0.2" />
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Other MDT roles / comments</label>
+          <textarea name="mdt_other" placeholder="e.g. dietetics 0.2 WTE, specialist nurse, social work..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- S4: Deaths -->
+    <div class="section-card">
+      <div class="section-head">
+        <span class="section-num">04</span>
+        <span class="section-name">Deaths — last 5 years</span>
+      </div>
+      <div class="section-body">
+        <div class="note">Please flag explicitly if any death occurred in a patient with hypochondroplasia (HCH).</div>
+
+        <div>
+          <div class="cond-label cond-ach">ACH</div>
+          <div class="field">
+            <label>Number of deaths <span class="req">*</span></label>
+            <input type="number" name="deaths_ach" min="0" placeholder="0" required />
+          </div>
+        </div>
+
+        <hr class="divider" />
+
+        <div>
+          <div class="cond-label cond-hch">HCH</div>
+          <div class="field">
+            <label>Number of deaths <span class="req">*</span></label>
+            <input type="number" name="deaths_hch" min="0" placeholder="0" required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Cause(s) of death / additional notes</label>
+          <textarea name="deaths_notes" placeholder="e.g. 1× sudden unexpected death in infancy (ACH, age 4 months). Please flag HCH cases explicitly."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- S5: ALTEs -->
+    <div class="section-card">
+      <div class="section-head">
+        <span class="section-num">05</span>
+        <span class="section-name">Acute life-threatening events (ALTEs)</span>
+      </div>
+      <div class="section-body">
+
+        <div>
+          <div class="cond-label cond-ach">ACH</div>
+          <div class="inline-row">
+            <div class="field">
+              <label>No. of ALTEs (last 5 yrs) <span class="req">*</span></label>
+              <input type="number" name="alte_ach_n" min="0" placeholder="0" required />
+            </div>
+            <div class="field">
+              <label>Age(s) at ALTE</label>
+              <input type="text" name="alte_ach_ages" placeholder="e.g. 3m, 14m, 2y" />
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider" />
+
+        <div>
+          <div class="cond-label cond-hch">HCH</div>
+          <div class="inline-row">
+            <div class="field">
+              <label>No. of ALTEs (last 5 yrs) <span class="req">*</span></label>
+              <input type="number" name="alte_hch_n" min="0" placeholder="0" required />
+            </div>
+            <div class="field">
+              <label>Age(s) at ALTE</label>
+              <input type="text" name="alte_hch_ages" placeholder="e.g. 6m" />
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- S6: Respiratory + surgical -->
+    <div class="section-card">
+      <div class="section-head">
+        <span class="section-num">06</span>
+        <span class="section-name">Respiratory interventions &amp; surgical adverse events</span>
+      </div>
+      <div class="section-body">
+
+        <!-- Respiratory -->
+        <div class="field">
+          <label style="font-size:14px; color:var(--text)">Respiratory interventions</label>
+          <p class="hint">Current or ever patients. Include age at initiation where known.</p>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:10px;">
+          <div class="field">
+            <label>CPAP — patients</label>
+            <input type="number" name="cpap_n" min="0" placeholder="0" style="width:100%" />
+            <input type="text" name="cpap_age" placeholder="Median age" style="margin-top:6px; font-size:13px" />
+          </div>
+          <div class="field">
+            <label>NIV — patients</label>
+            <input type="number" name="niv_n" min="0" placeholder="0" style="width:100%" />
+            <input type="text" name="niv_age" placeholder="Median age" style="margin-top:6px; font-size:13px" />
+          </div>
+          <div class="field">
+            <label>Tracheostomy — patients</label>
+            <input type="number" name="trach_n" min="0" placeholder="0" style="width:100%" />
+            <input type="text" name="trach_age" placeholder="Median age" style="margin-top:6px; font-size:13px" />
+          </div>
+        </div>
+
+        <hr class="divider" />
+
+        <!-- FMSD -->
+        <div class="surg-block">
+          <div class="surg-title">Foramen magnum / suboccipital decompression (FMSD)</div>
+          <p class="hint">Last 5 years. Enter 0 if none.</p>
+          <div class="surg-pair">
+            <div class="field">
+              <div class="cond-label cond-ach" style="margin-bottom:4px">ACH</div>
+              <label>No. of procedures</label>
+              <input type="number" name="fmsd_ach_n" min="0" placeholder="0" />
+            </div>
+            <div class="field">
+              <div class="cond-label cond-hch" style="margin-bottom:4px">HCH</div>
+              <label>No. of procedures</label>
+              <input type="number" name="fmsd_hch_n" min="0" placeholder="0" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Age bands at time of procedure (ACH + HCH combined)</label>
+            <div class="checkbox-group">
+              <label><input type="checkbox" name="fmsd_age[]" value="<2 yrs" />&lt;2 yrs</label>
+              <label><input type="checkbox" name="fmsd_age[]" value="2–5 yrs" />2–5 yrs</label>
+              <label><input type="checkbox" name="fmsd_age[]" value="5–10 yrs" />5–10 yrs</label>
+              <label><input type="checkbox" name="fmsd_age[]" value="10–16 yrs" />10–16 yrs</label>
+              <label><input type="checkbox" name="fmsd_age[]" value=">16 yrs" />&gt;16 yrs</label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Complications</label>
+            <input type="text" name="fmsd_complications" placeholder="e.g. 1× CSF leak. Leave blank if none." />
+          </div>
+        </div>
+
+        <!-- Spinal decompression -->
+        <div class="surg-block">
+          <div class="surg-title">Spinal decompression</div>
+          <p class="hint">Last 5 years. Enter 0 if none.</p>
+          <div class="surg-pair">
+            <div class="field">
+              <div class="cond-label cond-ach" style="margin-bottom:4px">ACH</div>
+              <label>No. of procedures</label>
+              <input type="number" name="spinal_ach_n" min="0" placeholder="0" />
+            </div>
+            <div class="field">
+              <div class="cond-label cond-hch" style="margin-bottom:4px">HCH</div>
+              <label>No. of procedures</label>
+              <input type="number" name="spinal_hch_n" min="0" placeholder="0" />
+            </div>
+          </div>
+          <div class="surg-pair">
+            <div class="field">
+              <label>No. needing repeat surgery (ACH)</label>
+              <input type="number" name="spinal_ach_repeat" min="0" placeholder="0" />
+            </div>
+            <div class="field">
+              <label>No. needing repeat surgery (HCH)</label>
+              <input type="number" name="spinal_hch_repeat" min="0" placeholder="0" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Age bands at time of procedure (ACH + HCH combined)</label>
+            <div class="checkbox-group">
+              <label><input type="checkbox" name="spinal_age[]" value="<2 yrs" />&lt;2 yrs</label>
+              <label><input type="checkbox" name="spinal_age[]" value="2–5 yrs" />2–5 yrs</label>
+              <label><input type="checkbox" name="spinal_age[]" value="5–10 yrs" />5–10 yrs</label>
+              <label><input type="checkbox" name="spinal_age[]" value="10–16 yrs" />10–16 yrs</label>
+              <label><input type="checkbox" name="spinal_age[]" value=">16 yrs" />&gt;16 yrs</label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Complications</label>
+            <input type="text" name="spinal_complications" placeholder="e.g. 1× dural tear. Leave blank if none." />
+          </div>
+        </div>
+
+        <!-- Paralysis -->
+        <div class="surg-block">
+          <div class="surg-title">Paralysis (peri- or post-operative)</div>
+          <p class="hint">Last 5 years. Enter 0 if none.</p>
+          <div class="surg-pair">
+            <div class="field">
+              <div class="cond-label cond-ach" style="margin-bottom:4px">ACH</div>
+              <label>No. of cases</label>
+              <input type="number" name="paralysis_ach_n" min="0" placeholder="0" />
+            </div>
+            <div class="field">
+              <div class="cond-label cond-hch" style="margin-bottom:4px">HCH</div>
+              <label>No. of cases</label>
+              <input type="number" name="paralysis_hch_n" min="0" placeholder="0" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Age bands at time of event (ACH + HCH combined)</label>
+            <div class="checkbox-group">
+              <label><input type="checkbox" name="paralysis_age[]" value="<2 yrs" />&lt;2 yrs</label>
+              <label><input type="checkbox" name="paralysis_age[]" value="2–5 yrs" />2–5 yrs</label>
+              <label><input type="checkbox" name="paralysis_age[]" value="5–10 yrs" />5–10 yrs</label>
+              <label><input type="checkbox" name="paralysis_age[]" value="10–16 yrs" />10–16 yrs</label>
+              <label><input type="checkbox" name="paralysis_age[]" value=">16 yrs" />&gt;16 yrs</label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Reversibility</label>
+            <div class="radio-group">
+              <label><input type="radio" name="paralysis_reversibility" value="All reversible" />All reversible</label>
+              <label><input type="radio" name="paralysis_reversibility" value="Partially reversible" />Partially reversible</label>
+              <label><input type="radio" name="paralysis_reversibility" value="Permanent" />Permanent</label>
+              <label><input type="radio" name="paralysis_reversibility" value="Mixed" />Mixed</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Any other surgical complications or notes</label>
+          <textarea name="surgical_notes" placeholder="Free text..."></textarea>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="submit-wrap">
+      <button type="submit" class="submit-btn">Submit response</button>
+      <p class="submit-note">Responses are collected securely and used for service planning purposes only.</p>
+    </div>
+
+  </form>
+
+  <!-- Success screen -->
+  <div id="success-screen">
+    <div class="check">✓</div>
+    <h2>Thank you for your response.</h2>
+    <p>Your data has been submitted successfully. For any queries contact <a href="mailto:moira.cheung@gosh.nhs.uk" style="color:var(--ach)">moira.cheung@gosh.nhs.uk</a></p>
+  </div>
+
+</main>
+
+<script>
+  // Progress bar
+  const form = document.getElementById('survey-form');
+  const fill = document.getElementById('progressFill');
+  const label = document.getElementById('progressLabel');
+
+  function updateProgress() {
+    const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+    let filled = 0;
+    inputs.forEach(i => { if (i.value.trim() !== '') filled++; });
+    const pct = Math.round((filled / inputs.length) * 100);
+    fill.style.width = pct + '%';
+    label.textContent = pct + '%';
+  }
+  form.addEventListener('input', updateProgress);
+  form.addEventListener('change', updateProgress);
+
+  // Formspree AJAX submit
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const data = new FormData(form);
+    const btn = form.querySelector('.submit-btn');
+    btn.textContent = 'Submitting…';
+    btn.disabled = true;
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        form.style.display = 'none';
+        document.getElementById('success-screen').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        btn.textContent = 'Error — please try again';
+        btn.disabled = false;
+      }
+    } catch {
+      btn.textContent = 'Error — please try again';
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
